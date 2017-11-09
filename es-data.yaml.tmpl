@@ -92,11 +92,6 @@ spec:
         - name: transport
           containerPort: 9300
           protocol: TCP
-        # Random hostPort to prevent multiple ES data instances on one node
-        - name: dummy
-          containerPort: 28651
-          protocol: TCP
-          hostPort: 28651
         volumeMounts:
         - name: storage
           mountPath: /data
@@ -112,7 +107,8 @@ spec:
       terminationGracePeriodSeconds: 31557600
       volumes:
       - name: storage
-        emptyDir: {}
+        persistentVolumeClaim:
+          claimName: es-pvc
       - name: es-config
         configMap:
           name: es-config
