@@ -4,7 +4,7 @@ metadata:
   name: elasticsearch-logging
   labels:
     component: elasticsearch
-    role: client
+    role: master
   annotations:
     prometheus.io/scrape: 'true'
     prometheus.io/path: '/_prometheus/metrics'
@@ -12,7 +12,7 @@ metadata:
 spec:
   selector:
     component: elasticsearch
-    role: client
+    role: master
   ports:
   - name: http
     port: 9200

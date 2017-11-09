@@ -51,7 +51,7 @@ spec:
         - -Des.path.conf=/etc/elasticsearch
         readinessProbe:
           tcpSocket:
-            port: 9300
+            port: 9200
           timeoutSeconds: 1
           successThreshold: 3
         imagePullPolicy: Always
@@ -73,9 +73,9 @@ spec:
         - name: NODE_MASTER
           value: 'true'
         - name: NODE_DATA
-          value: 'false'
+          value: 'true'
         - name: HTTP_ENABLE
-          value: 'false'
+          value: 'true'
         - name: ES_HEAP_SIZE
           valueFrom:
             configMapKeyRef:
@@ -86,11 +86,23 @@ spec:
             configMapKeyRef:
               name: es-env
               key: es-client-endpoint
+        - name: NETWORK_HOST
+          value: '_lo_,_eth0_' # https://github.com/pires/kubernetes-elasticsearch-cluster/pull/148
+        - name: ES_PERSISTENT
+          valueFrom:
+            configMapKeyRef:
+              name: es-env
+              key: es-persistent-storage
         ports:
         - name: transport
           containerPort: 9300
           protocol: TCP
+        - name: http
+          containerPort: 9200
+          protocol: TCP
         volumeMounts:
+        - name: storage
+          mountPath: /data
         - name: es-config
           mountPath: /etc/elasticsearch
         # /pre-stop-hook.sh hook is already used in /run.sh on pod shutdown
@@ -100,8 +112,11 @@ spec:
         #      command:
         #      - '/pre-stop-hook.sh'
       # Wait infinite, we have to move all indices from the current node and only after that shut down the pod
-      terminationGracePeriodSeconds: 31557600
+      #terminationGracePeriodSeconds: 31557600
       volumes:
+      - name: storage
+        persistentVolumeClaim:
+          claimName: es-pvc
       - name: es-config
         configMap:
           name: es-config
