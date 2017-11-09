@@ -3,19 +3,15 @@ kind: Ingress
 metadata:
   name: ingress-monitoring
 spec:
-  tls:
-  - hosts:
-    - kibana.example.com
-    - elasticsearch.example.com
   rules:
-  - host: kibana.example.com
+  - host: kibana-logging.monitoring.k8s.coinster.info
     http:
       paths:
       - backend:
           serviceName: kibana-logging
           servicePort: 5601
         path: /
-  - host: elasticsearch.example.com
+  - host: elasticsearch-logging.monitoring.k8s.coinster.info
     http:
       paths:
       - backend:

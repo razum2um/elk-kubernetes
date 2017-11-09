@@ -4,9 +4,9 @@ metadata:
 kind: ConfigMap
 data:
   es-cluster-name: es-logs
-  es-client-java-opts: -Xms4g -Xmx4g
-  es-master-java-opts: -Xms1024m -Xmx1024m
-  es-data-java-opts: -Xms4g -Xmx4g
+  es-client-java-opts: -Xms3g -Xmx3g
+  es-master-java-opts: -Xms3g -Xmx3g
+  es-data-java-opts: -Xms3g -Xmx3g
   es-remove-indices-older-than-days: "60"
   es-client-endpoint: http://elasticsearch-logging:9200
   # es-persistent-storage=true won't allow node on shutdown to relocate shards accross the cluster

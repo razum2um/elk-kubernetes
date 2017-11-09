@@ -12,7 +12,7 @@ metadata:
 spec:
   selector:
     component: elasticsearch
-    role: client
+    role: master
   ports:
   - name: http
     port: 9200
