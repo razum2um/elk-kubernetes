@@ -17,24 +17,15 @@ spec:
       labels:
         component: elasticsearch
         role: data
-      annotations:
-        scheduler.alpha.kubernetes.io/affinity: |
-          {
-            \"podAntiAffinity\": {
-              \"requiredDuringSchedulingIgnoredDuringExecution\": [
-                {
-                  \"labelSelector\": {
-                    \"matchLabels\": {
-                        \"component\": \"elasticsearch\",
-                        \"role\": \"data\"
-                      }
-                  },
-                  \"topologyKey\": \"kubernetes.io/hostname\"
-                }
-              ]
-            }
-          }
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - component: elasticsearch
+                role: data
+            topologyKey: kubernetes.io/hostname
       containers:
       - name: es-data
         securityContext:
@@ -87,11 +78,6 @@ spec:
         - name: transport
           containerPort: 9300
           protocol: TCP
-        # Random hostPort to prevent multiple ES data instances on one node
-        - name: dummy
-          containerPort: 28652
-          protocol: TCP
-          hostPort: 28652
         volumeMounts:
         - name: storage
           mountPath: /data
@@ -107,10 +93,8 @@ spec:
       terminationGracePeriodSeconds: 31557600
       volumes:
       - name: storage
-        hostPath:
-          path: '/data/elk'
-      #- name: storage
-      #  emptyDir: {}
+        persistentVolumeClaim:
+          claimName: es-pvc
       - name: es-config
         configMap:
           name: es-config

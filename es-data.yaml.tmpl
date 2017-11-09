@@ -35,6 +35,14 @@ spec:
             }
           }
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - component: elasticsearch
+                role: data
+            topologyKey: kubernetes.io/hostname
       containers:
       - name: es-data
         securityContext:
